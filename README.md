@@ -21,7 +21,8 @@ plink --vcf $VCF \
   --out sparrows_ys
 ```
 
-The parameters ```10 10 0.1``` were found in Francesco's thesis: “All loci within a 10kb window that showed linkage above 0.1 were removed”
+The parameters ```10 10 0.1``` were found in Francesco's thesis: “All loci within a 10kb window that showed linkage above 0.1 were removed”.
+
 This produced ```sparrows_ys.prune.in``` and ```sparrows_ys.prune.out```.
 
 #### Perform PCA
@@ -39,5 +40,6 @@ plink --vcf $VCF \
   --chr-set 28
 ```
 
-```--mind 0.99``` is from Francesco's note
+```--mind 0.99``` is from Francesco's note.
+
 This produced ```sparrows_ys.bed```, ```sparrows_ys.bim```, ```sparrows_ys.fam```, ```sparrows_ys.eigenval``` and ```sparrows_ys.eigenvec```.

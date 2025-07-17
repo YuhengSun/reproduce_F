@@ -191,4 +191,4 @@ Rscript plotADMIXTURE.r -p sparrows_ys -i sparrows_ys.info -k 4 -l north_cluster
 Again, the overall conclusion isn't affected but the difference is not negligible:
 
 ![Francesco's ADMIXTURE](images/ADMIXTURE_FQ.png)
-![my ADMIXTURE](images/ADMIXTURE_YS.png)
+![my ADMIXTURE](images/ADMIXTURE_YS.tiff)

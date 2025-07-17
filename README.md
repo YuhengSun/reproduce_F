@@ -45,8 +45,10 @@ This produced ```sparrows_ys.bed```, ```sparrows_ys.bim```, ```sparrows_ys.fam``
 ```sparrows_ys.eigenval``` and ```sparrows_ys.eigenvec``` were then processed locally in RStudio using the script ```PCAafterPLINK_ys.R```. 
 The final plots are:
 
-![Francesco's](images/PCA_FQ.png)
-![My](images/PCA_YS.png)
+Francesco's:
+!(images/PCA_FQ.png)
+My:
+!(images/PCA_YS.png)
 
 ## Population tree
 I followed Francesco's instructions in his email: 
@@ -190,5 +192,7 @@ Rscript plotADMIXTURE.r -p sparrows_ys -i sparrows_ys.info -k 4 -l north_cluster
 
 Again, the overall conclusion isn't affected but the difference is not negligible:
 
-![Francesco's ADMIXTURE](images/ADMIXTURE_FQ.png)
-![my ADMIXTURE](images/ADMIXTURE_YS.tiff)
+Francesco's:
+![](images/ADMIXTURE_FQ.png)
+my:
+![](images/ADMIXTURE_YS.png)

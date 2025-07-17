@@ -46,9 +46,9 @@ This produced ```sparrows_ys.bed```, ```sparrows_ys.bim```, ```sparrows_ys.fam``
 The final plots are:
 
 Francesco's:
-!(images/PCA_FQ.png)
+![](images/PCA_FQ.png)
 My:
-!(images/PCA_YS.png)
+![](images/PCA_YS.png)
 
 ## Population tree
 I followed Francesco's instructions in his email: 

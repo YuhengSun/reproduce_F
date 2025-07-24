@@ -1,9 +1,6 @@
 library(tidyverse)
 library(ggrepel)
 
-#setwd("/home/fq/Desktop/uni/PCA/")
-setwd("C:/Users/48012629/OneDrive - Macquarie University/Desktop/RUG-MQ/MyPapers/YuhengHouseSparrow/MQ_part/Francesco's/master thesis code, data/PCA")
-
 pca <- read_table2("sparrows2.eigenvec", col_names = FALSE) # this is Francesco's eigenvectors, for comparison
 pca2 <- read_table2("sparrows_ys.eigenvec", col_names = FALSE) # this is my eigenvectors
 eigenval <- scan("sparrows2.eigenval") # Francesco's eigenvalues

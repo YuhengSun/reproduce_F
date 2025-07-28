@@ -326,6 +326,22 @@ VCFSUBSET=/cluster/work/users/ysun/BrokenHill_Adelaide/subset.vcf.gz
 bcftools index $VCFSUBSET
 ```
 
+Visualise the sample quality:
+
+```
+# Missing rates
+vcftools --gzvcf $VCFSUBSET \
+  --missing-indv
+  
+# Mean depths
+vcftools --gzvcf $VCFSUBSET \
+  --depth
+```
+
+Use the R script ```missing_rate_plot.R``` locally again to produce the plot:
+
+![](images/MissingRateAndDepth_subset.png)
+
 #### F<sub>ST</sub>
 The subset vcf is ready, then I'm going to calculate F<sub>ST</sub> for the two populations. This used the GitHub repository 
 https://github.com/simonhmartin/genomics_general.

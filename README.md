@@ -246,3 +246,142 @@ I only plotted K=2 and K=3, but they are more like Francesco's plot:
 Some differences might be due to how the individuals were ordered.
 
 I don't know why the data still messed up with Joana's R script...
+
+## Detect selective sweep
+For detecting selective sweep, I only used samples from one pair of sites: Broken Hill - Adelaide, to save time.
+
+First, I used the R script ```GeneratePopInfo.R``` locally with ```metadata.csv``` to generate a list that only contained samples from Broken Hill 
+and Adelaide.
+
+The generated list ```pop.info``` was uploaded to HPC.
+
+Then I subset the vcf.gz file to make one only contains Broken Hill and Adelaide individuals. First, create a list of sample names:
+
+```
+cut -f1 pop.info > sample_list.txt
+```
+
+Then extract the subset vcf:
+
+```
+# Load bcftools module
+module load BCFtools/1.19-GCC-13.2.0
+
+bcftools view -S sample_list.txt -Oz -o /cluster/work/users/ysun/BrokenHill_Adelaide/subset.vcf.gz $VCF
+```
+
+However, it gave me this error:
+
+```
+Error: subset called for sample that does not exist in header: "PDOM2015AUS0080F". Use "--force-samples" to ignore this error.
+```
+
+I ran following code to check which individuals were not in ```$VCF```:
+
+```
+bcftools query -l $VCF > vcf_samples.txt # Extract sample names from the vcf
+comm -23 <(sort sample_list.txt) <(sort vcf_samples.txt) # Print individuals that are in the metadata but not in the vcf, which are:
+PDOM2013AUS0029U
+PDOM2013AUS0030U
+PDOM2013AUS0031U
+PDOM2013AUS0032U
+PDOM2013AUS0033U
+PDOM2013AUS0034U
+PDOM2013AUS0035U
+PDOM2013AUS0036U
+PDOM2013AUS0037U
+PDOM2014AUS0017U
+PDOM2014AUS0023U
+PDOM2014AUS0025U
+PDOM2015AUS0080F
+PDOM2015AUS0083M
+PDOM2015AUS0088F
+PDOM2015AUS0100F
+PDOM2022AUS0003F
+PDOM2023AUS0036F
+PDOM2023AUS0038M
+PDOM2023AUS0039M
+PDOM2023AUS0041M
+PDOM2023AUS0043M
+PDOM2023AUS0045M
+```
+
+I don't know why they are not in the vcf, it may be about how the sequences were filtered? Anyway, I tried to get individuals that 
+appeared in both the metadata and the vcf, by:
+
+```
+grep -Ff vcf_samples.txt pop.info > pop.valid.info # a filtered list with location info
+cut -f1 pop.valid.info > sample.valid.txt # valid sample names
+```
+
+Then I ran this to subset the vcf:
+
+```
+bcftools view -S sample.valid.txt -Oz -o /cluster/work/users/ysun/BrokenHill_Adelaide/subset.vcf.gz $VCF
+
+# And define it as future input data
+VCFSUBSET=/cluster/work/users/ysun/BrokenHill_Adelaide/subset.vcf.gz
+
+# Index the vcf
+bcftools index $VCFSUBSET
+```
+
+#### F<sub>ST</sub>
+The subset vcf is ready, then I'm going to calculate F<sub>ST</sub> for the two populations. This used the GitHub repository 
+https://github.com/simonhmartin/genomics_general.
+
+Load Python module:
+
+```
+module load Python/3.11.5-GCCcore-13.2.0
+```
+
+Run:
+
+```
+python parseVCF.py -i $VCFSUBSET | bgzip > subset.geno.gz
+```
+
+Calculate pi for each species and Fst and dxy for each pair of species all in one go. 
+
+```
+GENOGENE=/cluster/work/users/ysun/genomics_general
+
+python $GENOGENE/popgenWindows.py -g subset.geno.gz -o subset.Fst.Dxy.pi.csv.gz \
+   -f phased -w 20000 -m 10000 -s 10000 \
+   -p adelaide -p broken_hill \
+   --popsFile pop.valid.info \
+   --verbose
+```
+
+In Francesco's thesis: "The calculation was done on sliding windows of 20000 kb, with a step size of 10000 kb". 
+But I keep getting this:
+
+```
+...
+Sorter received window 99797
+Slice 99797 sent to writer
+Writer received result 99797
+Sorter received window 99798
+Slice 99798 sent to writer
+Writer received result 99798
+Sorter received window 99799
+Slice 99799 sent to writer
+Writer received result 99799
+Sorter received window 99800
+Slice 99800 sent to writer
+Writer received result 99800
+Sorter received window 99801
+Slice 99801 sent to writer
+Writer received result 99801
+Sorter received window 99802
+Slice 99802 sent to writer
+Writer received result 99802
+Sorter received window 99803
+Slice 99803 sent to writer
+Writer received result 99803
+99804 windows were tested.
+0 results were written.
+
+Done.
+```

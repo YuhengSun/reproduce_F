@@ -401,3 +401,24 @@ Writer received result 99803
 
 Done.
 ```
+
+Then I followed Mark's suggestion, lowering -m to ```5```:
+
+```
+python $GENOGENE/popgenWindows.py -g subset.geno.gz -o subset.Fst.Dxy.pi.csv.gz \
+   -f phased -w 20000 -m 5 -s 10000 \
+   -p adelaide -p broken_hill \
+   --popsFile pop.valid.info
+```
+
+This successfully produced output. I downloaded it (```subset.Fst.Dxy.pi.csv.gz```) and processed it in RStudio. 
+However, this dataset differs substantially from Francesco's. 
+This dataset has only 6253 observations from 29 chromosomes, while Francesco's had 104984 from 31 chromosomes. 
+
+I looked back and checked ```subset.vcf.gz``` itself, and found that the number of chromosomes was also 29 in this file. 
+This made me think it was either I used wrong original vcf (shouldn't be ```wholegenome_sparrows_variants_norm.vcf.gz```?) 
+or I did something wrong when selecting samples.
+
+But anyway, I still plotted it just to see how the code works (I don't think this plot mean anything!):
+
+![](images/Fst.png)

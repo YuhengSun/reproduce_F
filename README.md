@@ -261,6 +261,13 @@ Then I subset the vcf.gz file to make one only contains Broken Hill and Adelaide
 cut -f1 pop.info > sample_list.txt
 ```
 
+Define the new VCF (not using ```wholegenome_sparrows_variants_norm.vcf.gz``` this time because I'm analysing the differentiation of the two populations), 
+use the full vcf instead:
+
+```
+VCF=/cluster/work/users/ysun/HouseAusLead_filteredvcf/gs_wholegenome_sparrows_variants_norm.vcf.gz
+```
+
 Then extract the subset vcf:
 
 ```
@@ -317,10 +324,8 @@ cut -f1 pop.valid.info > sample.valid.txt # valid sample names
 Then I ran this to subset the vcf:
 
 ```
-bcftools view -S sample.valid.txt -Oz -o /cluster/work/users/ysun/BrokenHill_Adelaide/subset.vcf.gz $VCF
-
-# And define it as future input data
 VCFSUBSET=/cluster/work/users/ysun/BrokenHill_Adelaide/subset.vcf.gz
+bcftools view -S sample.valid.txt -Oz -o $VCFSUBSET $VCF
 
 # Index the vcf
 bcftools index $VCFSUBSET
@@ -349,7 +354,7 @@ https://github.com/simonhmartin/genomics_general.
 Load Python module:
 
 ```
-module load Python/3.11.5-GCCcore-13.2.0
+module load Python/3.11.3-GCCcore-12.3.0
 ```
 
 Run:
@@ -375,28 +380,17 @@ But I keep getting this:
 
 ```
 ...
-Sorter received window 99797
-Slice 99797 sent to writer
-Writer received result 99797
-Sorter received window 99798
-Slice 99798 sent to writer
-Writer received result 99798
-Sorter received window 99799
-Slice 99799 sent to writer
-Writer received result 99799
-Sorter received window 99800
-Slice 99800 sent to writer
-Writer received result 99800
-Sorter received window 99801
-Slice 99801 sent to writer
-Writer received result 99801
-Sorter received window 99802
-Slice 99802 sent to writer
-Writer received result 99802
-Sorter received window 99803
-Slice 99803 sent to writer
-Writer received result 99803
-99804 windows were tested.
+Slice 104672 sent to writer
+Writer received result 104672
+Sorter received window 104673
+Slice 104673 sent to writer
+Writer received result 104673
+Sorter received window 104674
+
+Waiting for all threads to finish
+Slice 104674 sent to writer
+Writer received result 104674
+104675 windows were tested.
 0 results were written.
 
 Done.
@@ -419,6 +413,6 @@ I looked back and checked ```subset.vcf.gz``` itself, and found that the number 
 This made me think it was either I used wrong original vcf (shouldn't be ```wholegenome_sparrows_variants_norm.vcf.gz```?) 
 or I did something wrong when selecting samples.
 
-But anyway, I still plotted it just to see how the code works (I don't think this plot mean anything!):
+But anyway, I still plotted it just to see how the code works (I don't think this plot means anything!):
 
 ![](images/Fst.png)

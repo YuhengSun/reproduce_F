@@ -421,7 +421,7 @@ His plot:
 ![](images/FST_F.jpg)
 
 My plot:
-![](images/Fst.png)
+![](images/FST.png)
 
 Hmm, I don't know how similar I could call this. But there is something happening on chr1, 2 and 8?
 

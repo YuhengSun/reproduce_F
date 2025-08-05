@@ -402,17 +402,26 @@ Then I followed Mark's suggestion, lowering -m to ```5```:
 python $GENOGENE/popgenWindows.py -g subset.geno.gz -o subset.Fst.Dxy.pi.csv.gz \
    -f phased -w 20000 -m 5 -s 10000 \
    -p adelaide -p broken_hill \
-   --popsFile pop.valid.info
+   --popsFile pop.valid.info \
+   --verbose
 ```
 
 This successfully produced output. I downloaded it (```subset.Fst.Dxy.pi.csv.gz```) and processed it in RStudio. 
-However, this dataset differs substantially from Francesco's. 
-This dataset has only 6253 observations from 29 chromosomes, while Francesco's had 104984 from 31 chromosomes. 
 
-I looked back and checked ```subset.vcf.gz``` itself, and found that the number of chromosomes was also 29 in this file. 
-This made me think it was either I used wrong original vcf (shouldn't be ```wholegenome_sparrows_variants_norm.vcf.gz```?) 
-or I did something wrong when selecting samples.
+Francesco's dataset had 104984 observations from 31 chromosomes + scaffolds; my dataset has 104371 observations from 31 chromosomes + scaffolds.
 
-But anyway, I still plotted it just to see how the code works (I don't think this plot means anything!):
+Negative F<sub>ST</sub> accounted for 30.5% in Francesco's dataset, and 33.2% in my dataset.
 
+After removing scaffolds, 98506 observations from Francesco's dataset, 30.4% negative values; 98480 observations from my dataset, 32.2% negative values.
+
+After removing negative values, genome-wide F<sub>ST</sub> was 0.024 for Francesco's dataset, 0.012 for mine. (0.024 was what I got running his code, 
+but he reported 0.014 in his thesis.)
+
+His plot:
+![](images/FST_F.jpg)
+
+My plot:
 ![](images/Fst.png)
+
+Hmm, I don't know how similar I could call this. But there is something happening on chr1, 2 and 8?
+

@@ -348,8 +348,10 @@ Use the R script ```missing_rate_plot.R``` locally again to produce the plot:
 ![](images/MissingRateAndDepth_subset.png)
 
 #### F<sub>ST</sub>
-The subset vcf is ready, then I'm going to calculate F<sub>ST</sub> for the two populations. This used the GitHub repository 
-https://github.com/simonhmartin/genomics_general.
+The subset vcf is ready, then I'm going to calculate F<sub>ST</sub> for the two populations. 
+
+I first computed F<sub>ST</sub> following the how-to guide (https://speciationgenomics.github.io/sliding_windows/) 
+using the GitHub repository https://github.com/simonhmartin/genomics_general.
 
 Load Python module:
 
@@ -415,7 +417,7 @@ Negative F<sub>ST</sub> accounted for 30.5% in Francesco's dataset, and 33.2% in
 After removing scaffolds, 98506 observations from Francesco's dataset, 30.4% negative values; 98480 observations from my dataset, 32.2% negative values.
 
 After removing negative values, genome-wide F<sub>ST</sub> was 0.024 for Francesco's dataset, 0.012 for mine. (0.024 was what I got running his code, 
-but he reported 0.014 in his thesis.)
+but he reported 0.014 in his thesis. But in his figure, it looked more like 0.024.)
 
 His plot:
 ![](images/FST_F.jpg)
@@ -423,5 +425,28 @@ His plot:
 My plot:
 ![](images/FST.jpg)
 
-Hmm, I don't know how similar I could call this. But there is something happening on chr1, 2 and 8?
+Hmm, I don't know how similar I could call this. But then I used vcftools, with code:
+
+```
+vcftools --gzvcf $VCFSUBSET \
+  --weir-fst-pop Adelaide \
+  --weir-fst-pop BrokenHill \
+  --fst-window-size 20000 \
+  --fst-window-step 10000 \
+  --out Adelaide_BrokenHill
+```
+
+and this produced identical result to Francesco's.
+
+#### Tajima's D
+```
+vcftools --gzvcf $VCFSUBSET \
+  --TajimaD 10000 \
+  --keep SampleList_BrokenHill \
+  --out BrokenHill
+```
+
+This also produced identical results to Francesco's.
+
+![](images/TajimasD.jpg)
 

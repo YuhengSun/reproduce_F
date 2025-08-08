@@ -490,3 +490,15 @@ WARN: Can't read history file: .nextflow/history
 ```
 
 The log file is uploaded as ```.nextflow.log```.
+
+Now I'm trying the new pipeline: https://github.com/EcoEvoGenomics/genotyping_pipeline. 
+I copied `subset.vcf.gz` and `subset.vcf.gz.csi` (they are subset Adelaide-Broken Hill samples) 
+to `/cluster/work/users/ysun/genotyping_pipeline/output/03-variants_filtered/francesco` 
+and renamed them `variants_francesco.vcf.gz` and `variants_francesco.vcf.gz.csi`, respectively.
+Then I ran:
+
+```
+sbatch genotyping_pipeline.slurm.sh
+```
+
+under the path `/cluster/work/users/ysun/genotyping_pipeline`.

@@ -450,3 +450,43 @@ This also produced identical results to Francesco's.
 
 ![](images/TajimasD.jpg)
 
+#### xpEHH
+
+I used the repository https://github.com/markravinet/phasing_pipeline for phasing.
+
+Load miniconda and mamba:
+
+```
+module load Miniconda3/23.10.0-1
+module load Mamba/23.11.0-0
+```
+
+Activate the pre-built environment for phasing:
+
+```
+conda activate /cluster/projects/nn10082k/conda_group/phase
+```
+
+Run the code:
+
+```
+nextflow run phasing.nf \
+  --vcf '/cluster/work/users/ysun/BrokenHill_Adelaide/subset.vcf.gz' \
+  --windows 'house_genome_windows'
+```
+
+```house_genome_windows``` is a file copied from ```/cluster/projects/nn10082k/ref```. But this code ended up with:
+
+```
+Completed at: 07-Aug-2025 04:58:19
+Duration    : 1h 32m 11s
+CPU hours   : 0.9 (100% failed)
+Succeeded   : 0
+Ignored     : 12'414
+Failed      : 12'414
+
+WARN: Can't read history file: .nextflow/history
+WARN: Can't read history file: .nextflow/history
+```
+
+The log file is uploaded as ```.nextflow.log```.

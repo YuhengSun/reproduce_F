@@ -489,16 +489,83 @@ WARN: Can't read history file: .nextflow/history
 WARN: Can't read history file: .nextflow/history
 ```
 
-The log file is uploaded as ```.nextflow.log```.
+The log file is uploaded as `.nextflow.log`.
 
 Now I'm trying the new pipeline: https://github.com/EcoEvoGenomics/genotyping_pipeline. 
-I copied `subset.vcf.gz` and `subset.vcf.gz.csi` (they are subset Adelaide-Broken Hill samples) 
-to `/cluster/work/users/ysun/genotyping_pipeline/output/03-variants_filtered/francesco` 
-and renamed them `variants_francesco.vcf.gz` and `variants_francesco.vcf.gz.csi`, respectively.
+Under `/cluster/work/users/ysun/genotyping_pipeline`, I created the path `/output/03-variants_filtered/francesco` 
+and copied `wholegenome_sparrows_variants_norm.vcf.gz` (normalised variant only vcf) and `wholegenome_sparrows_variants_norm.vcf.gz.csi` into it. 
+Then I renamed them `variants_francesco.vcf.gz` and `variants_francesco.vcf.gz.csi`, respectively.
+
 Then I ran:
 
 ```
 sbatch genotyping_pipeline.slurm.sh
 ```
 
-under the path `/cluster/work/users/ysun/genotyping_pipeline`.
+under the path `/cluster/work/users/ysun/genotyping_pipeline`. This produced phased bcfs, vcf.gz's and indexes for each chromosome. 
+
+I have the sample name list `Adelaide` and `BrokenHill`. I ran this to subset them from the whole vcf.gz:
+
+```
+# Define input and output directory
+input_dir="/cluster/work/users/ysun/genotyping_pipeline/output/03-variants_filtered/francesco/phased"
+output_dir="/cluster/work/users/ysun/xpEHH/Adelaide"
+sample_file="/cluster/work/users/ysun/FST/Adelaide"
+
+# Loop all the vcf.gz's
+for vcf in ${input_dir}/*/*.vcf.gz; do
+    # Extract filenames (without path)
+    fname=$(basename "$vcf")
+    
+    # Output path
+    out_vcf="${output_dir}/Adelaide_${fname}"
+    
+    echo "Processing $fname ..."
+    
+    bcftools view -S "$sample_file" \
+        -O z \
+        -o "$out_vcf" \
+        "$vcf" \
+        --force-samples && \
+    bcftools index "$out_vcf"
+done
+```
+
+Run the same for the Broken Hill samples:
+
+```
+# Define input and output directory
+input_dir="/cluster/work/users/ysun/genotyping_pipeline/output/03-variants_filtered/francesco/phased"
+output_dir="/cluster/work/users/ysun/xpEHH/BrokenHill"
+sample_file="/cluster/work/users/ysun/FST/BrokenHill"
+
+# Loop all the vcf.gz's
+for vcf in ${input_dir}/*/*.vcf.gz; do
+    # Extract filenames (without path)
+    fname=$(basename "$vcf")
+    
+    # Output path
+    out_vcf="${output_dir}/BrokenHill_${fname}"
+    
+    echo "Processing $fname ..."
+    
+    bcftools view -S "$sample_file" \
+        -O z \
+        -o "$out_vcf" \
+        "$vcf" \
+        --force-samples && \
+    bcftools index "$out_vcf"
+done
+```
+
+Output vcf.gz's were downloaded and run in RStudio using the script `xpEHH.R`.
+
+The result was not much alike:
+
+Mine:
+
+![](images/xpEHH_Adelaide_BrokenHill.jpg)
+
+Francesco's:
+
+![](images/xpEHH_Adelaide_BrokenHill_FQ.jpg)

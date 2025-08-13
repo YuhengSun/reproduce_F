@@ -569,3 +569,7 @@ Mine:
 Francesco's:
 
 ![](images/xpEHH_Adelaide_BrokenHill_FQ.jpg)
+
+I doubt that we diverged from phasing, as I used the variant-only vcf while he used the full dataset. 
+His xpehh data ended up much much larger than mine. (For example for chr1, his xpehh had 1580443 observations while mine only had 2817.) 
+(and I don't have mtDNA.)

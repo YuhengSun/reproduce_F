@@ -573,3 +573,5 @@ Francesco's:
 I doubt that we diverged from phasing, as I used the variant-only vcf while he used the full dataset. 
 His xpehh data ended up much much larger than mine. (For example for chr1, his xpehh had 1580443 observations while mine only had 2817.) 
 (and I don't have mtDNA.)
+
+(I just used Francesco's code and it should be a mistake on the y-axis -- it should be negative log p-value, not xpEHH.)

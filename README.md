@@ -566,12 +566,11 @@ Mine:
 
 ![](images/xpEHH_Adelaide_BrokenHill.jpg)
 
-Francesco's:
+Francesco's (it should be a mistake on the y-axis -- it should be negative log p-value, not xpEHH.):
 
 ![](images/xpEHH_Adelaide_BrokenHill_FQ.jpg)
 
 I doubt that we diverged from phasing, as I used the variant-only vcf while he used the full dataset. 
 His xpehh data ended up much much larger than mine. (For example for chr1, his xpehh had 1580443 observations while mine only had 2817.) 
-(and I don't have mtDNA.)
-
-(I just used Francesco's code and it should be a mistake on the y-axis -- it should be negative log p-value, not xpEHH.)
+(and I don't have mtDNA.) However, I checked the positions of the outlier sites, and none of them was the same. 
+Outliers were saved in `outliers.csv` (mine) and `outliers_F.csv` (Francesco's) respectively.

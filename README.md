@@ -574,3 +574,33 @@ I doubt that we diverged from phasing, as I used the variant-only vcf while he u
 His xpehh data ended up much much larger than mine. (For example for chr1, his xpehh had 1580443 observations while mine only had 2817.) 
 (and I don't have mtDNA.) However, I checked the positions of the outlier sites, and none of them was the same. 
 Outliers were saved in `outliers.csv` (mine) and `outliers_F.csv` (Francesco's) respectively.
+
+## Identify and cluster outliers
+
+I used the R script `id_and_cluster_outliers_fst.R` to identify and cluster F<sub>ST</sub> outliers. 
+The F<sub>ST</sub> was originally calculated in 20000 bp bins. If the distance between the middle points of two ourlier bins wasn't larger than 
+100000, they are combined into one cluster. In this way, 576 outlier clusters were identified. The result is saved as 
+`adelaide_brokenhill_top2,5%fst_nochrZ_clusters_20kb.csv`.
+
+For Tajima's D, the R script `id_and_cluster_outlier_tajd.R` works in the same way, just that the Tajima's D was calculated with 10000 bp bins. 
+The result was saved as `brokenhill_tajimad_bottom2,5%_clusters.csv`.
+
+Then, for xpEHH, I used Francesco's output for now just to reproduce. Each xpEHH value corresponds to a cumulative position, 
+and they are also clustered with the 100000 pb threshold. I don't understand why this code exists (in the R script 
+`identify_and_cluster_outliers.R`):
+
+```
+# Adjust the start and stop positions
+myCluster <- myCluster %>%
+  mutate(start = start - 125000,
+         stop = stop + 125000)
+```
+
+but I leave it for now. The result was saved as `adelaide_bhill_xpehh_nochrZ_clusters_+-125k.csv`.
+
+## Identify genes
+
+The R script `identify_genes_clusters.R` maps the outlier regions from the previous step to a .gff file. 
+It outputs gene lists `adelaide_brokenhill_top2,5%_fst_genes.list` (for F<sub>ST</sub>), `brokenhill_top2,5%_tajd_genes.list` 
+(for Tajima's D), and `XonlyID_xpehh_nochrZ_adelaide_bhill.list`(for xpEHH).
+

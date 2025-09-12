@@ -604,3 +604,5 @@ The R script `identify_genes_clusters.R` maps the outlier regions from the previ
 It outputs gene lists `adelaide_brokenhill_top2,5%_fst_genes.list` (for F<sub>ST</sub>), `brokenhill_top2,5%_tajd_genes.list` 
 (for Tajima's D), and `XonlyID_xpehh_nochrZ_adelaide_bhill.list`(for xpEHH).
 
+Using the R command `intersect()`, 1 gene was identified by all the three metrics. It's IV00_00047272. Note in the gff is "Similar to Cuedc1: CUE domain-containing protein 1 (Mus musculus)". 
+I searched on NCBI to find out this is a gene related to **protein binding** and **ubiquitin binding**.

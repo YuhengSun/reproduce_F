@@ -450,6 +450,32 @@ This also produced identical results to Francesco's.
 
 ![](images/TajimasD.jpg)
 
+#### π<sub>polluted</sub>/π<sub>control</sub>
+
+Mark and I decided to substitute Tajima's D with π<sub>polluted</sub>/π<sub>control</sub> because the latter controls for background selection and 
+mutation rate. I use a 20000 window with a 10000 step to keep it consistent with the F<sub>ST</sub> analysis.
+
+```
+VCFSUBSET=/cluster/work/users/ysun/BrokenHill_Adelaide/subset.vcf.gz
+cd /cluster/work/users/ysun/pi_ratio
+
+# For Broken Hill:
+vcftools --gzvcf $VCFSUBSET \
+  --keep BrokenHill \
+  --window-pi 20000 \
+  --window-pi-step 10000 \
+  --out pi_BrokenHill
+  
+# For Adelaide:
+vcftools --gzvcf $VCFSUBSET \
+  --keep Adelaide \
+  --window-pi 20000 \
+  --window-pi-step 10000 \
+  --out pi_Adelaide
+```
+
+
+
 #### xpEHH
 
 I used the repository https://github.com/markravinet/phasing_pipeline for phasing.
@@ -502,7 +528,8 @@ Then I ran:
 sbatch genotyping_pipeline.slurm.sh
 ```
 
-under the path `/cluster/work/users/ysun/genotyping_pipeline`. This produced phased bcfs, vcf.gz's and indexes for each chromosome. 
+under the path `/cluster/work/users/ysun/genotyping_pipeline`, with a phasing window size of 10000000. 
+This produced phased bcfs, vcf.gz's and indexes for each chromosome. 
 
 I have the sample name list `Adelaide` and `BrokenHill`. I ran this to subset them from the whole vcf.gz:
 
@@ -571,9 +598,136 @@ Francesco's (it should be a mistake on the y-axis -- it should be negative log p
 ![](images/xpEHH_Adelaide_BrokenHill_FQ.jpg)
 
 I doubt that we diverged from phasing, as I used the variant-only vcf while he used the full dataset. 
-His xpehh data ended up much much larger than mine. (For example for chr1, his xpehh had 1580443 observations while mine only had 2817.) 
+His xpehh data ended up much much larger than mine. (For example for chr1A, his xpehh had 1580443 observations while mine only had 2817.) 
 (and I don't have mtDNA.) However, I checked the positions of the outlier sites, and none of them was the same. 
 Outliers were saved in `outliers.csv` (mine) and `outliers_F.csv` (Francesco's) respectively.
+
+To diagnose, I used the same input (`gs_wholegenome_sparrows_variants_norm.vcf.gz`) as Francesco did, and renamed them 
+"variants_full_data_ver.vcf.gz" and "variants_full_data_ver.vcf.gz.csi" under the path 
+`/cluster/work/users/ysun/genotyping_pipeline/output/03-variants_filtered/full_data_ver`, and changed `filtering_label` to `"full_data_ver"` 
+in `genotyping_pipeline.slurm.sh`.
+
+Then I ran:
+
+```
+sbatch genotyping_pipeline.slurm.sh
+```
+
+under the path `/cluster/work/users/ysun/genotyping_pipeline`, with a phasing window size of 10000000. 
+This produced phased bcfs, vcf.gz's and indexes for each chromosome under the path 
+`/cluster/work/users/ysun/genotyping_pipeline/output/03-variants_filtered/full_data_ver/phased`. 
+Then I repeated the process:
+
+I have the sample name list `Adelaide` and `BrokenHill`. I ran this to subset them from the whole vcf.gz:
+
+```
+# Define input and output directory
+input_dir="/cluster/work/users/ysun/genotyping_pipeline/output/03-variants_filtered/full_data_ver/phased"
+output_dir="/cluster/work/users/ysun/xpEHH/Adelaide_full"
+sample_file="/cluster/work/users/ysun/FST/Adelaide"
+
+# Loop all the vcf.gz's
+for vcf in ${input_dir}/*/*.vcf.gz; do
+    # Extract filenames (without path)
+    fname=$(basename "$vcf")
+    
+    # Output path
+    out_vcf="${output_dir}/Adelaide_${fname}"
+    
+    echo "Processing $fname ..."
+    
+    bcftools view -S "$sample_file" \
+        -O z \
+        -o "$out_vcf" \
+        "$vcf" \
+        --force-samples && \
+    bcftools index "$out_vcf"
+done
+```
+
+It gave me warnings:
+
+```
+Warn: subset called for sample that does not exist in header: "PDOM2015AUS0080F"... skipping
+Warn: subset called for sample that does not exist in header: "PDOM2015AUS0083M"... skipping
+Warn: subset called for sample that does not exist in header: "PDOM2015AUS0088F"... skipping
+Warn: subset called for sample that does not exist in header: "PDOM2015AUS0100F"... skipping
+Warn: subset called for sample that does not exist in header: "PDOM2013AUS0031U"... skipping
+Warn: subset called for sample that does not exist in header: "PDOM2013AUS0037U"... skipping
+Warn: subset called for sample that does not exist in header: "PDOM2014AUS0017U"... skipping
+Warn: subset called for sample that does not exist in header: "PDOM2014AUS0023U"... skipping
+Warn: subset called for sample that does not exist in header: "PDOM2014AUS0025U"... skipping
+```
+
+I don't remember if I had this before, so I ran the following line to check what samples 
+```/cluster/work/users/ysun/genotyping_pipeline/output/03-variants_filtered/full_data_ver/phased/chr1/chr1.vcf.gz``` 
+contains:
+
+```
+bcftools query -l /cluster/work/users/ysun/xpEHH/Adelaide_full/Adelaide_chr1.vcf.gz \
+> /cluster/work/users/ysun/xpEHH/Adelaide_full/FullDataSamples
+```
+
+Run the same for the old phased vcf.gz:
+
+```
+bcftools query -l /cluster/work/users/ysun/xpEHH/Adelaide/Adelaide_chr1.vcf.gz \
+> /cluster/work/users/ysun/xpEHH/Adelaide/samples
+```
+
+The two files are the same so no problem.
+
+Run the same for the Broken Hill samples:
+
+```
+# Define input and output directory
+input_dir="/cluster/work/users/ysun/genotyping_pipeline/output/03-variants_filtered/full_data_ver/phased"
+output_dir="/cluster/work/users/ysun/xpEHH/BrokenHill_full"
+sample_file="/cluster/work/users/ysun/FST/BrokenHill"
+
+# Loop all the vcf.gz's
+for vcf in ${input_dir}/*/*.vcf.gz; do
+    # Extract filenames (without path)
+    fname=$(basename "$vcf")
+    
+    # Output path
+    out_vcf="${output_dir}/BrokenHill_${fname}"
+    
+    echo "Processing $fname ..."
+    
+    bcftools view -S "$sample_file" \
+        -O z \
+        -o "$out_vcf" \
+        "$vcf" \
+        --force-samples && \
+    bcftools index "$out_vcf"
+done
+```
+
+Just to make sure if the samples are right:
+
+```
+bcftools query -l /cluster/work/users/ysun/xpEHH/BrokenHill/BrokenHill_chr1.vcf.gz \
+> /cluster/work/users/ysun/xpEHH/BrokenHill/samples
+
+bcftools query -l /cluster/work/users/ysun/xpEHH/BrokenHill_full/BrokenHill_chr1.vcf.gz \
+> /cluster/work/users/ysun/xpEHH/BrokenHill_full/FullDataSamples
+```
+
+No problem.
+
+Output vcf.gz's were downloaded and run in RStudio using the script `xpEHH.R`. The process took long locally so I consider running it on HPC for 
+the formal analysis. Chr1 had 1580835 observations, which differed from 1580443 in Francesco's original analysis, but not a lot! 
+
+Francesco's chr1 had 93 outliers, and mine had 103. They are similar although not the same:
+
+Mine:
+
+![](images/xpEHH_chr1_YS.png)
+
+Francesco's:
+
+![](images/xpEHH_chr1_FQ.png)
 
 ## Identify and cluster outliers
 
@@ -605,4 +759,4 @@ It outputs gene lists `adelaide_brokenhill_top2,5%_fst_genes.list` (for F<sub>ST
 (for Tajima's D), and `XonlyID_xpehh_nochrZ_adelaide_bhill.list`(for xpEHH).
 
 Using the R command `intersect()`, 1 gene was identified by all the three metrics. It's IV00_00047272. Note in the gff is "Similar to Cuedc1: CUE domain-containing protein 1 (Mus musculus)". 
-I searched on NCBI to find out this is a gene related to **protein binding** and **ubiquitin binding**.
+I searched on NCBI to find out Cuedc1 is a gene related to **protein binding** and **ubiquitin binding**.
